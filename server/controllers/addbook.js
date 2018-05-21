@@ -1,16 +1,29 @@
 
-const https = request('https')
+const https = require('https')
+const { mysql } = require('../qcloud')
 
 //新增图书
 //1. 获取豆瓣信息
 // https://developers.douban.com/wiki/?title=book_v2#get_isbn_book
 // https://api.douban.com/v2/book/isbn/9787536692930
 //2. 入库
+
 module.exports = async (ctx) => {
 	const {isbn, openid} = ctx.request.body
-	if(isbn && openid) {
 
-		let url = 'https://api.douban.com/v2/book/isbn' + isbn
+	if(isbn && openid) {
+		const findRes = await mysql('books').select().where('isbn',isbn)
+		if(findRes.length) {
+			ctx.state = {
+				code: -1,
+				data: {
+					msg: '图书已存在'
+				}
+			}
+			return
+		}
+
+		let url = 'https://api.douban.com/v2/book/isbn/:' + isbn
 		const bookinfo = await getJSON(url)
 		const rate = bookinfo.rating.average
 		const { title, image, alt, publisher, summary, price } = bookinfo
@@ -18,6 +31,11 @@ module.exports = async (ctx) => {
 			return `${v.title} ${v.count}`
 		}).join(',')
 		const author = bookinfo.author.join(',')
+
+		console.log({
+			isbn, openid, rate, title, image, alt, publisher, summary, price, tags, author
+		})
+
 		try {
 			await mysql('books').insert({
 				isbn, openid, rate, title, image, alt, publisher, summary, price, tags, author
@@ -41,16 +59,16 @@ function getJSON(url) {
 	return new Promise((reslove, reject) => {
 		https.get(url, res => {
 			let urlData = ''
-		})
-		res.on('data', data => {
-			urlData += data
-		})
-		res.on('end', data => {
-			const bookinfo = JSON.parse(data)
-			if(bookinfo.title) {
-				reslove(bookinfo)
-			}
-			reject(bookinfo)
+			res.on('data', data => {
+				urlData += data
+			})
+			res.on('end', data => {
+				const bookinfo = JSON.parse(urlData)
+				if(bookinfo.title) {
+					reslove(bookinfo)
+				}
+				reject(bookinfo)
+			})
 		})
 	})
 }

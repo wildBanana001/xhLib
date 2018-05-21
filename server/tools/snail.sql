@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS `books`;
 		`image` varchar(100) NOT NULL,
 		`alt` varchar(100) NOT NULL,
 		`publisher` varchar(100) NOT NULL,
-		`summary` varchar(100) NOT NULL,
+		`summary` varchar(1000) NOT NULL,
 		`price` varchar(100) NOT NULL,
 		`rate` float DEFAULT NULL,
 		`tags` varchar(100) NOT NULL,

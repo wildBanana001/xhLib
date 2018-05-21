@@ -1,6 +1,4 @@
 <script>
-import { get, showSuccess, showFail } from './utils/util'
-
 export default {
 	async created() {
 		console.log('app start!')

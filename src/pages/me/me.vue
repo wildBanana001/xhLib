@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<div class="userinfo" @click='login'>
+		<div class="userinfo">
 			<img :src="userinfo.avatarUrl">
 			<p>{{userinfo.nickName}}</p>
 			<button v-if='!userinfo.openId' open-type='getUserInfo' type='primary' @getuserinfo='login'>登陆</button>
@@ -13,7 +13,7 @@
 <script>
 import qcloud from 'wafer2-client-sdk'
 import  config from '@/config'
-import { showSuccess, showFail, showModal,post } from '@/utils/util'
+import { showSuccess, showFail, showModal, post } from '@/utils/util'
 import YearProgress from '@/components/YearProgress'
 
 export default {
@@ -30,7 +30,7 @@ export default {
 				isbn,
 				openid: this.userinfo.openId
 			})
-			showModal('添加成功', `${res.data.title}添加成功`)
+			showModal('添加成功', `${res.title}添加成功`)
 		},
 		scanBook() {
 			wx.scanCode({

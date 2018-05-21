@@ -12,8 +12,9 @@ export function request(url, method, data, header={}) {
 				if(res.data.code === 0) {
 					reslove(res.data.data)
 				} else {
-					showModel('失败',res.data.data.msg)
-					reject(res.data)
+					console.log(res)
+					// showModal('失败',res.data.data.msg)
+					// reject(res.data)
 				}
 			}
 		})
